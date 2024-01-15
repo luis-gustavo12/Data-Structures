@@ -32,6 +32,22 @@ int main() {
 
 	PRINT_SUCCESS("TestDoublyLinkedList");
 
+	assert(TestBinaryTree() == 1);
+
+	PRINT_SUCCESS("BinaryTree");
+
+	assert(TestStack() == 1);
+
+	PRINT_SUCCESS("Stack");
+
+	assert(TestQueue() == 1);
+
+	PRINT_SUCCESS("Queue");
+
+	assert(TestPriorityQueue() == 1);
+
+	PRINT_SUCCESS("PriorityQueue");
+
 	return 1;
 
 }

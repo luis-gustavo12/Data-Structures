@@ -5,9 +5,7 @@ template <typename T>
 class Node {
 
 
-
-
-protected:
+private:
 
     T content;
     Node<T>* next;
@@ -26,7 +24,7 @@ public:
 
     }
 
-    
+
 
     Node<T>* GetNext() {
         return this->next;
@@ -42,8 +40,8 @@ public:
     }
 
     T& GetContentReference() {
-        
-        
+
+
         return this->content;
     }
 
@@ -55,7 +53,7 @@ public:
     }
 
 
-    
+
 
 
 

@@ -22,10 +22,12 @@
 #include <vector>
 #include <cassert>
 
-#include "Node.h"
 #include "LinkedList.h"
-#include "DNode.h"
 #include "DoublyLinkedList.h"
+#include "BinaryTree.h"
+#include "Stack.h"
+#include "Queue.h"
+#include "PriorityQueue.h"
 
 
 
@@ -35,14 +37,15 @@ int TestNode();
 
 /************************************** Tests for LinkedLists **************************************/
 
-template <typename T>
-int TestEmptyListException(LinkedList<T> list);
 
 template <typename T>
-int TestInsertionException(LinkedList<T> list);
+int TestEmptyListException(LinkedList::LinkedList<T> list);
 
 template <typename T>
-int TestRemoveException(LinkedList<T> list);
+int TestInsertionException(LinkedList::LinkedList<T> list);
+
+template <typename T>
+int TestRemoveException(LinkedList::LinkedList<T> list);
 
 
 // This test is a very specific one. When you're deleting a list that has only one member, it must be ensure that the head and last nodes point to null and size == 1
@@ -61,9 +64,41 @@ int TestDNodes();
 
 // list can't insert at a posiiton that does not exist
 template <typename T>
-int TestInsertException(DoublyLinkedList<T>list);
+int TestInsertException(DoublyLinkedList::DoublyLinkedList<T> list);
 
 template <typename T>
-int TestRemoveException(DoublyLinkedList<T>list);
+int TestRemoveException(DoublyLinkedList::DoublyLinkedList<T> list);
 
 int TestDoublyLinkedList();
+
+
+
+/************************************** Tests for Binary Trees **************************************/
+
+template <typename T>
+int TestBinaryTreeRemoveException(BinaryTree::BinaryTree<T> tree, T invalidValue);
+
+int TestBinaryTree();
+
+
+/************************************** Tests for Stacks **************************************/
+
+template <typename T>
+int TestStackPopException(Stack::Stack<T> stack);
+
+template <typename T>
+int TestStackPrintException(Stack::Stack<T> stack);
+
+int TestStack();
+
+/************************************** Tests for Queues **************************************/
+
+int TestQueue();
+
+/************************************** Tests for PriorityQueues **************************************/
+
+int TestPriorityQueue();
+
+/************************************** Tests for Generic Trees **************************************/
+
+int TestGenericTree();

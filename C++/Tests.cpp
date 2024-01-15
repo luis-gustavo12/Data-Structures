@@ -15,11 +15,12 @@
 int TestNode() {
 
 
-	Node<int> node1(25);
+
+	LinkedList::Node<int> node1(25);
 
 	assert(node1.GetContent() == 25);
 
-	Node<int> node2(122);
+	LinkedList::Node<int> node2(122);
 
 	node1.SetNext(&node2);
 
@@ -38,7 +39,7 @@ int TestNode() {
 // TESTS LINKED LIST
 
 template<typename T>
-int TestEmptyListException(LinkedList<T> list) {
+int TestEmptyListException(LinkedList::LinkedList<T> list) {
 
 	try {
 		list.Print();
@@ -51,7 +52,7 @@ int TestEmptyListException(LinkedList<T> list) {
 }
 
 template<typename T>
-int TestInsertionException(LinkedList<T> list) {
+int TestInsertionException(LinkedList::LinkedList<T> list) {
 
 	try {
 		list.Insert(25, list.GetSize() + 1);
@@ -63,7 +64,7 @@ int TestInsertionException(LinkedList<T> list) {
 }
 
 template<typename T>
-int TestRemoveException(LinkedList<T> list) {
+int TestRemoveException(LinkedList::LinkedList<T> list) {
 
 	try {
 
@@ -83,7 +84,7 @@ int TestRemoveException(LinkedList<T> list) {
 
 int TestRemoveDeletePositionZero() {
 
-	LinkedList<int> list;
+	LinkedList::LinkedList<int> list;
 
 	list.PushFront(25);
 
@@ -98,7 +99,7 @@ int TestLinkedList() {
 	
 	assert(TestRemoveDeletePositionZero() == 1);
 
-	LinkedList<int> list;
+	LinkedList::LinkedList<int> list;
 
 	assert(TestEmptyListException(list) == 1);
 
@@ -185,9 +186,9 @@ int TestLinkedList() {
 
 int TestDNodes() {
 
-	DNode<int> node   (25);
-	DNode<int> node2  (12);
-	DNode<int> node3 (129);
+	DoublyLinkedList::Node<int> node   (25);
+	DoublyLinkedList::Node<int> node2  (12);
+	DoublyLinkedList::Node<int> node3 (129);
 
 	assert(node.GetContent() == 25);
 
@@ -199,7 +200,7 @@ int TestDNodes() {
 
 	assert(node.GetPrev() == & node3);
 
-	DNode<int> node4(178);
+	DoublyLinkedList::Node<int> node4(178);
 
 	node.SetNext(&node4);
 
@@ -209,11 +210,10 @@ int TestDNodes() {
 
 	return 1;
 
-
 }
 
 template <typename T>
-int TestInsertException(DoublyLinkedList<T> list) {
+int TestInsertException(DoublyLinkedList::DoublyLinkedList<T> list) {
 	
 
 	int wrongPos = list.GetSize() + 1;
@@ -230,7 +230,7 @@ int TestInsertException(DoublyLinkedList<T> list) {
 }
 
 template<typename T>
-int TestRemoveException(DoublyLinkedList<T> list) {
+int TestRemoveException(DoublyLinkedList::DoublyLinkedList<T> list) {
 	
 	int wrongIndex = list.GetSize() + 1;
 
@@ -247,11 +247,27 @@ int TestRemoveException(DoublyLinkedList<T> list) {
 
 }
 
+template<typename T>
+int TestBinaryTreeRemoveException(BinaryTree::BinaryTree<T> tree, T invalidValue) {
+
+	try {
+		tree.Remove(invalidValue);
+	} catch (const std::exception&) {
+		return 1;
+	}
+
+
+	return 0;
+}
+
+
+
+
 int TestDoublyLinkedList() {
 
 	assert(TestDNodes() == 1);
 
-	DoublyLinkedList<int> list;
+	DoublyLinkedList::DoublyLinkedList<int> list;
 
 	list.PushBack(2);
 
@@ -305,6 +321,185 @@ int TestDoublyLinkedList() {
 
 	assert(list.PrintReverse() == "123 35 13 999");
 
+	return 1;
+}
+
+int TestBinaryTree() {
+
+	BinaryTree::BinaryTree<int> tree(12);
+
+	assert(tree.GetRootContent() == 12);
+
+	assert(tree.GetNodeCount() == 1);
+
+	assert(tree.Contains(25) == 0);
+
+	tree.Insert(123);
+
+	assert(tree.Contains(123) == 1);
+
+	tree.Insert(3);
+
+	assert(tree.GetNodeCount() == 3);
+
+	assert(tree.FindNode(155) == nullptr);
+
+	assert(tree.FindNodeRecursive(tree.GetRoot(), 155) == nullptr);
+
+	/***
+	* 
+	* 
+	*              12
+	* 
+	*      3                        123
+	* 
+	*  2         9               79
+	*         8      11
+	* 
+	* This is how tree is suposed to look like, after inserts below. Better image can be found at the finle Binary Tree.png
+	* 
+	* 
+	*/
+
+	tree.Insert(2);
+	tree.Insert(9);
+	tree.Insert(8);
+	tree.Insert(11);
+	tree.Insert(79);
+
+	assert(tree.FindParent(3)->GetData() == 12);
+	assert(tree.FindParent(8)->GetData() == 9);
+	assert(tree.FindParent(79)->GetData() == 123);
+	assert(tree.FindParent(2)->GetData() == 3);
+
+	//Recursive assertions
+	assert(tree.FindParentRecursive(tree.GetRoot(), 3)->GetData() == 12);
+	assert(tree.FindParentRecursive(tree.GetRoot(), 8)->GetData() == 9);
+	assert(tree.FindParentRecursive(tree.GetRoot(), 79)->GetData() == 123);
+	assert(tree.FindParentRecursive(tree.GetRoot(), 2)->GetData() == 3);
+
+	assert(tree.GetNodeCount() == 8);
+	
+	assert(TestBinaryTreeRemoveException(tree, 950) == 1);
+
+	assert(tree.FindLargestValueNode()->GetData() == 123);
+
+	// Before moving on with tests, it'd be better to implement the transversal algorithms, so it's easier to see the expected results
+	assert(tree.PreOrder() == "12 3 2 9 8 11 123 79");
+
+	assert(tree.PostOrder() == "2 8 11 9 3 79 123 12 ");
+
+	assert(tree.InOrder() == "2 3 8 9 11 12 79 123 ");
+	
+	return 1;
+
+}
+
+// TESTS STACKS
+
+template <typename T>
+int TestStackPopException(Stack::Stack<T> stack) {
+
+	try {
+
+		stack.Pop();
+
+	} catch (const std::exception&) {
+		return 1;
+	}
+
+	return 0;
+}
+
+template <typename T>
+int TestStackPrintException(Stack::Stack<T> stack) {
+
+	try {
+
+		stack.Print();
+
+	} catch (const std::exception&) {
+
+		return 1;
+
+	}
+
+	return 0;
+}
+
+
+int TestStack() {
+
+	Stack::Stack<std::string> stack;
+
+	assert(stack.GetSize() == 0);
+
+	assert(TestStackPopException(stack) == 1);
+
+	assert(TestStackPrintException(stack) == 1);
+
+	stack.Push("Lina");
+
+	stack.Push("Pudge");
+
+	stack.Push("Rylai");
+
+	stack.Push("Balanar");
+
+	assert(stack.GetSize() == 4);
+
+	assert(stack.Print() == "Balanar Rylai Pudge Lina");
+
+	assert(stack.Peek() == "Balanar");
+
+	stack.Pop();
+
+	assert(stack.Print() == "Rylai Pudge Lina");
+
+	assert(stack.GetSize() == 3);
+
+	return 1;
+}
+
+// TEST QUEUES
+
+int TestQueue() {
+
+	Queue::Queue<int> queue (12);
+
+	assert(queue.Print() == "12");
+
+	queue.Enqueue(25);
+
+	queue.Enqueue(133);
+
+	queue.Enqueue(27);
+
+	assert(queue.GetSize() == 4);
+
+	assert(queue.Print() == "12 25 133 27");
+
+	queue.Dequeue();
+
+	assert(queue.GetSize() == 3);
+
+	assert(queue.Print() == "25 133 27");
+
+	assert(queue.Peek() == 25);
+
+	assert(queue.PeekBack() == 27);
+
+	return 1;
+}
+
+int TestPriorityQueue() {
+	return 1;
+}
+
+int TestGenericTree() {
+	
+
+	
 	return 1;
 }
 
