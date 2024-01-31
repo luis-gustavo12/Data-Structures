@@ -25,7 +25,8 @@ namespace GenericTree {
 		Node(T data) : data(data) {
 
 			this->parent = nullptr;
-			this->child = nullptr;
+			this->firstChild = nullptr;
+			this->lastChild = nullptr;
 			this->next = nullptr;
 
 		}
@@ -72,7 +73,7 @@ namespace GenericTree {
 	private:
 
 		Node<T>* root;
-		int treeHeight;
+		int treeDepth;
 
 
 	public:
@@ -80,136 +81,225 @@ namespace GenericTree {
 		GenericTree() {
 
 			this->root = nullptr;
-			this->treeHeight = 0;
+			this->treeDepth = 0;
 
 		}
 
 		GenericTree(T value) {
 
 			this->root = new Node<T>(value);
-			this->treeHeight = 1;
+			this->treeDepth = 1;
 
 		}
 
-		int GetTreeHeight() { return this->treeHeight; }
-		void IncreaseTreeHeight() { this->treeHeight += 1; }
-		void DecreaseTreeHeight() { this->treeHeight -= 1; }
+		int GetTreeDepth() { return this->treeDepth; }
+		void IncreaseTreeDepth() { this->treeDepth += 1; }
+		void DecreaseTreeDepth() { this->treeDepth -= 1; }
 
 		Node<T>* GetRoot() {
 			return this->root;
 		}
 
-		bool IsLeafNode(Node<T> node) {
+		T GetRootContent() { return this->root->GetData(); }
 
-			if (!node.GetFirstChild && !node.GetLastChild()) {
+		static bool IsLeafNode(Node<T>* node) {
+
+			if ( (node->GetFirstChild() == nullptr) && (node->GetLastChild() == nullptr)) {
 				return true;
 			}
 			return false;
 
 		}
 
-		// This function will calculate how many calls are needed to reach the root node (so, the height), and it is called
+		// This function will calculate how many degrees are needed to reach the root node (so, the depth), and it is called
 		// every time we need to add a new node to the tree. Onde we count how many nodes  were needed to reach root node 
 		// (which is the only node that has no parent), we give back the count
 		int CalculateDistanceToRoot(Node<T>* node) {
 
-			static int count = 1;
-			count += 1;
-			
-			if (node->GetParent()) {
-				return CountNewNodeHeight(node->GetParent())
-			} else {
-				return count;
+			if (!node->GetParent()) return 1;
+
+			int count = 0;
+
+			for (Node<T>* auxNode = node; auxNode; auxNode = auxNode->GetParent()) {
+				count += 1;
 			}
 
+			return count;
+
+
+		}
+
+		// If we got here, we first need to look for the parent node which has parentNodeValue
+
+		/*
+		* 
+		* Here's the search for the value we want in the tree. It's a greedy search.
+		* 
+		* It will always start from the root value, and will go through every single branch
+		* 
+		**/ 
+
+		Node<T>* FindNode(T value) {
+
+			Node<T>* parentNode = this->root; // This will be the parent node for every single iteration. It starts with the root node, but as the algorithm goes, it changes
+			Node<T>* iterNode; // This one will be the node that will iterate over all parent node's children. E.g.: if parent node has 3 childs, at some point, iterNode "will be" those 3 child nodes.
+			/*
+			* This will be the marker for when we passed through every single node. There will be some cases where we will check for the condition, and swap it to true, meaning we went through
+			* every tree node
+			* 
+			*/
+			bool passedAllNodes = 0;
+
+
+			while (!passedAllNodes) {
+
+				for (iterNode = parentNode->GetFirstChild(); iterNode; iterNode = iterNode->GetNext()) {
+
+					if (iterNode->GetData() == value) {
+						return iterNode;
+					}
+
+				}
+
+				/*
+				* 
+				* auxNode is the one we're going to check. I had to create this because if we keep changing
+				* nodeParent for the next iteration, it might get a nullptr as a return, and nullptr has no
+				* methods of a node, since it's a nullptr. So once auxNode assumes a suitable value to be
+				* replaced by parentNode, parentNode get its value, and goes to the next iteration (the one of
+				* while loop above). Basically, parentNode inside each iteration is a "backup" of a eventual nullptr
+				* return from the comparisons.
+				*/
+				Node<T>* auxNode = parentNode;
+				
+
+				// If it hasn't found anything in the for loop, iterate over the children of the next node
+				auxNode = parentNode->GetNext();
+
+				if (auxNode) {
+					parentNode = auxNode;
+					continue;
+				}
+
+				//If it didn't manage to find a neighbour, try to get the child nodes
+				auxNode = parentNode->GetFirstChild();
+
+				if (auxNode) {
+					parentNode = auxNode;
+					continue;
+				}
+
+				//If still didn't manage to find a child node, we have to start going up to the parents of parentNode, until we find an upper node that has a next neighbour 
+				// and then, start looking for child nodes again
+
+				auxNode = parentNode; //Reset auxNode again, because auxNode might have turned into nullptr
+
+				while (true) {
+
+					// If auxNode node finds one that has no parent, it means we reached the root node
+					if (!auxNode->GetParent()) return nullptr;
+
+					else if (auxNode == nullptr) throw std::exception("Unexpected behaviour!!!");
+					
+					else if (auxNode->GetNext()) {
+						parentNode = auxNode->GetNext();
+						continue;
+					}
+
+					//If it has no neighbour, then move up
+					auxNode = auxNode->GetParent();
+
+				}
+
+			}
 
 		}
 
 		// Possibilty to add a value given a T parentNodeValue
 		void AddValue(T value, T parentNodeValue) {
 
-			if (GetTreeHeight() == 0) throw std::exception("Empty tree!!!");
+			if (GetTreeDepth() == 0) throw std::exception("Empty tree!!!");
 			
-			
+			// We're adding to the root node
 			else if (parentNodeValue == this->root->GetData()) {
 
 				Node<T>* auxNode = new Node<T>(value);
 
 				if (!this->root->GetFirstChild()) {
 
-					IncreaseTreeHeight();
+					IncreaseTreeDepth();
 					// No last child can be set while first child is nullptr
 					if (this->root->GetLastChild()) throw std::exception("Unexpected behaviour!!!");
 					
 					this->root->SetFirstChild(auxNode);
+					this->root->SetLastChild(auxNode);
 					auxNode->SetParent(this->root);
 					return;
 
 				}
 
+				else if (this->root->GetFirstChild() == this->root->GetLastChild()) {
+					this->root->GetFirstChild()->SetNext(auxNode);
+					this->root->SetLastChild(auxNode);
+					auxNode->SetParent(this->root);
+					return;
+				}
 
-				// If it's not the first node to be added, and it's not the second, it means it will be added to the last child
 
 				this->root->GetLastChild()->SetNext(auxNode);
 				this->root->SetLastChild(auxNode);
 				auxNode->SetParent(this->root);
-
+				return;
 		
 
 			}
 
-			// If we got here, we first need to look for the parent node which has parentNodeValue
+			// We first find the parent one to then assign the new node of it as a child
+			Node<T>* parentNode = FindNode(parentNodeValue);
 
-			// Iteration
+			if (!parentNode) throw std::exception("Parent Node does not exist!!!");
 
-			Node<T>* parentNode = this->root; // This will be the one compared
-			Node<T>* iterNode; // This is the iterator that will iterate over the child nodes of parentNode. Name could be iterChildNode;
-			bool visitedAllNodes = 0; // If we visited all nodes, no need to keep on doing it
+			Node<T>* newNode = new Node<T>(value);
 
-			while (!visitedAllNodes) {
+			if (IsLeafNode(parentNode)) {
+				parentNode->SetFirstChild(newNode);
+				parentNode->SetLastChild(newNode);
+			}
 
+			else if (parentNode->GetFirstChild() == parentNode->GetLastChild()) {
+				parentNode->SetLastChild(newNode);
+				parentNode->GetFirstChild()->SetNext(newNode);
+				parentNode->SetLastChild(newNode);
+			}
 
-				for (iterNode = parentNode->GetFirstChild(); iterNode; iterNode = iterNode->GetNext()) {
+			else {
+				parentNode->GetLastChild()->SetNext(newNode);
+				parentNode->SetLastChild(newNode);
+			}
 
-					if (iterNode->GetData() == parentNodeValue) {
-						Node<T>* newNode = new Node<T>(value);
+			newNode->SetParent(parentNode);
+			//Now we check if the depth of the tree was increased, and change Tree member that counts the depth
 
-						// Only makes sense to bother about increasing tree height, if the parent node is a leaf node. Other wise,
-						// The tree height will already be higher thah the calculation of the distance of the parent node to the root.
-						// but we also, adding a node to a leaf node is different from adding to a normal node. So this if statement, will handle them 
-						// differently
-						if (IsLeafNode(parentNode)) {
+			if (CalculateDistanceToRoot(newNode) > GetTreeDepth()) IncreaseTreeDepth();
 
-							if (CalculateDistanceToRoot(parentNode) > GetTreeHeight()) IncreaseTreeHeight();
+		}
 
-							parentNode->SetFirstChild(newNode);
-							newNode->SetParent(parentNode);
-							return; // function ends here
+		std::string PrintChildren(Node<T>* parentNode) {
 
-						}
+			if (IsLeafNode(parentNode)) throw std::exception("Invalid parameter!!!");
 
-						parentNode->GetLastChild()->SetNext(newNode);
-						newNode->SetParent(parentNode);
-						parentNode->SetLastChild(parentNode);
-						return;
+			std::string output;
 
+			for (Node<T>* auxNode = parentNode->GetFirstChild(); auxNode; auxNode = auxNode->GetNext()) {
 
-					}
-
+				output += static_cast<std::string>(auxNode->GetData());
+				if ((auxNode == parentNode->GetLastChild()) == false) {
+					output += " ";
 				}
-
-				// If it reaches here, it means that any of the value above were the expected. Couple of things to consider about what are the next steps:
-
-				// First we check if it has a next node
-
-				parentNode = parentNode->GetNext();
-
-				if (parentNode) continue; // If it has a new one, search again with the neightbour
-
 
 			}
 
-
+			return output;
 
 		}
 

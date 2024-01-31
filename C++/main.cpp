@@ -1,7 +1,6 @@
 #include <iostream>
 #include <cassert>
 
-#include "Node.h"
 
 #include "Tests.h"
 
@@ -47,6 +46,14 @@ int main() {
 	assert(TestPriorityQueue() == 1);
 
 	PRINT_SUCCESS("PriorityQueue");
+
+	assert(TestGenericTree() == 1);
+
+	PRINT_SUCCESS("GenericTree");
+
+	assert(TestHash());
+
+	PRINT_SUCCESS("HashTable");
 
 	return 1;
 

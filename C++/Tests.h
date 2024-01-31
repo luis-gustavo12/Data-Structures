@@ -28,7 +28,8 @@
 #include "Stack.h"
 #include "Queue.h"
 #include "PriorityQueue.h"
-
+#include "GenericTree.h"
+#include "HashTable.h"
 
 
 int TestNode();
@@ -39,13 +40,13 @@ int TestNode();
 
 
 template <typename T>
-int TestEmptyListException(LinkedList::LinkedList<T> list);
+int TestEmptyListException(LinkedList::LinkedList<T>& list);
 
 template <typename T>
-int TestInsertionException(LinkedList::LinkedList<T> list);
+int TestInsertionException(LinkedList::LinkedList<T>& list);
 
 template <typename T>
-int TestRemoveException(LinkedList::LinkedList<T> list);
+int TestRemoveException(LinkedList::LinkedList<T>& list);
 
 
 // This test is a very specific one. When you're deleting a list that has only one member, it must be ensure that the head and last nodes point to null and size == 1
@@ -64,10 +65,10 @@ int TestDNodes();
 
 // list can't insert at a posiiton that does not exist
 template <typename T>
-int TestInsertException(DoublyLinkedList::DoublyLinkedList<T> list);
+int TestInsertException(DoublyLinkedList::DoublyLinkedList<T>& list);
 
 template <typename T>
-int TestRemoveException(DoublyLinkedList::DoublyLinkedList<T> list);
+int TestRemoveException(DoublyLinkedList::DoublyLinkedList<T>& list);
 
 int TestDoublyLinkedList();
 
@@ -101,4 +102,14 @@ int TestPriorityQueue();
 
 /************************************** Tests for Generic Trees **************************************/
 
+int TestGenericTreeFindNodeException();
+
 int TestGenericTree();
+
+/************************************** Tests for Hashs **************************************/
+
+int TesttDeletioneException();
+
+int TestSubscriptOperatorException();
+
+int TestHash();

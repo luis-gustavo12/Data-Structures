@@ -28,6 +28,7 @@ namespace DoublyLinkedList {
 		Node(T content) : content(content), prev(nullptr), next(nullptr) {
 		}
 
+
 		T GetContent() { return this->content; }
 
 		T& GetContentReference() { return this->content; }
@@ -78,6 +79,16 @@ namespace DoublyLinkedList {
 			this->last = nullptr;
 
 			this->size = 0;
+
+		}
+
+		~DoublyLinkedList() {
+
+			while (this->head) {
+				Node<T>* temp = this->head;
+				this->head = this->head->GetNext();
+				delete temp;
+			}
 
 		}
 
@@ -151,8 +162,9 @@ namespace DoublyLinkedList {
 			}
 
 			// indexes start at 0
+
 			int i = 0;
-			for (Node<T>* iterNode = this->head; iterNode != nullptr; iterNode = iterNode->GetNext()) {
+			for (Node<T>* iterNode = this->head; iterNode; iterNode = iterNode->GetNext()) {
 
 				if (i == pos) {
 
@@ -244,6 +256,16 @@ namespace DoublyLinkedList {
 		
 		}
 
+		//NOTE: needed for hash tables, once I had to make an iterator of the first value, and create a pointer to the head value
+		Node<T>* GetHead() {
+
+			if (this->size == 0) {
+				throw std::exception("Invalid method!!!");
+			}
+
+			return this->head;
+		}
+
 		T GetContent(int index) {
 
 			if (index >= this->size) {
@@ -300,6 +322,24 @@ namespace DoublyLinkedList {
 
 			}
 
+
+		}
+
+		// Finds the position given a T content
+		int FindPos(T content) {
+
+			int i = 0;
+			for (Node<T>* iterNode = this->head; iterNode; iterNode = iterNode->GetNext()) {
+
+				if (iterNode->GetContent() == content) {
+					return i;
+				}
+
+				i++;
+
+			}
+
+			return -1;
 
 		}
 

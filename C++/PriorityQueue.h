@@ -79,7 +79,7 @@ namespace PriorityQueue {
 			}
 
 			else if (IsWomen(gender) || pregnancy) {
-				this->isPregnant == true;
+				this->isPregnant = true;
 			}
 
 		}
@@ -154,12 +154,10 @@ namespace PriorityQueue {
 
 
 		short int PeekAge(User user) {
-
+			return 1;
 		}
 
-		bool PeekAge(User user) {
 
-		}
 
 
 

@@ -39,6 +39,21 @@ namespace Queue {
 
 		}
 
+		~Queue() {
+
+			this->last = nullptr;
+
+			while (this->first) {
+
+				LinkedList::Node<T>* auxNode = this->first;
+				this->first = this->first->GetNext();
+				delete auxNode;
+
+			}
+
+		}
+
+
 		int GetSize() { return this->size; }
 
 		void Enqueue(T value) {

@@ -33,6 +33,8 @@ namespace BinaryTree {
 
 		}
 
+
+
 		void SetData(T data) {
 			this->data = data;
 		}
@@ -86,7 +88,6 @@ namespace BinaryTree {
 		BinaryTree() {
 
 			this->root = nullptr;
-		
 
 
 		}

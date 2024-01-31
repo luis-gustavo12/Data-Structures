@@ -39,7 +39,7 @@ int TestNode() {
 // TESTS LINKED LIST
 
 template<typename T>
-int TestEmptyListException(LinkedList::LinkedList<T> list) {
+int TestEmptyListException(LinkedList::LinkedList<T>& list) {
 
 	try {
 		list.Print();
@@ -52,7 +52,7 @@ int TestEmptyListException(LinkedList::LinkedList<T> list) {
 }
 
 template<typename T>
-int TestInsertionException(LinkedList::LinkedList<T> list) {
+int TestInsertionException(LinkedList::LinkedList<T>& list) {
 
 	try {
 		list.Insert(25, list.GetSize() + 1);
@@ -64,7 +64,7 @@ int TestInsertionException(LinkedList::LinkedList<T> list) {
 }
 
 template<typename T>
-int TestRemoveException(LinkedList::LinkedList<T> list) {
+int TestRemoveException(LinkedList::LinkedList<T>& list) {
 
 	try {
 
@@ -213,7 +213,7 @@ int TestDNodes() {
 }
 
 template <typename T>
-int TestInsertException(DoublyLinkedList::DoublyLinkedList<T> list) {
+int TestInsertException(DoublyLinkedList::DoublyLinkedList<T>& list) {
 	
 
 	int wrongPos = list.GetSize() + 1;
@@ -230,7 +230,7 @@ int TestInsertException(DoublyLinkedList::DoublyLinkedList<T> list) {
 }
 
 template<typename T>
-int TestRemoveException(DoublyLinkedList::DoublyLinkedList<T> list) {
+int TestRemoveException(DoublyLinkedList::DoublyLinkedList<T>& list) {
 	
 	int wrongIndex = list.GetSize() + 1;
 
@@ -318,6 +318,12 @@ int TestDoublyLinkedList() {
 	list[1] = 13;
 
 	assert(list.Print() == "999 13 35 123");
+
+	assert(list.FindPos(999) == 0);
+
+	assert(list.FindPos(13) == 1);
+
+	assert(list.FindPos(123) == 3);
 
 	assert(list.PrintReverse() == "123 35 13 999");
 
@@ -496,10 +502,100 @@ int TestPriorityQueue() {
 	return 1;
 }
 
+// TEST GENERIC TREES
+
+int TestGenericTreeFindNodeException() {
+	return 0;
+}
+
 int TestGenericTree() {
 	
+	// I'm using Abraham Genealogic tree to test this DS. I'm using Portuguese names
+	GenericTree::GenericTree<std::string> tree("Abraão");
 
-	
+	std::string rootValue = "Abraão";
+
+	assert(tree.GetRootContent() == "Abraão");
+
+	assert(tree.GetTreeDepth() == 1);
+
+	tree.AddValue("Isaque", rootValue);
+
+	tree.AddValue("Ismael", rootValue);
+
+	tree.AddValue("Zinrã", rootValue);
+
+	assert(tree.PrintChildren(tree.GetRoot()) == "Isaque Ismael Zinrã");
+
+	tree.AddValue("Jacó", "Isaque");
+
+	tree.AddValue("Esaú", "Isaque");
+
+	GenericTree::Node<std::string>* isaacNode = tree.FindNode("Isaque");
+
+	assert(isaacNode->GetParent() == tree.GetRoot());
+
+	assert(tree.GetTreeDepth() == 3);
+
+	tree.AddValue("Rúben", "Jacó");
+	tree.AddValue("Simeão", "Jacó");
+	tree.AddValue("Levi", "Jacó");
+	tree.AddValue("Judá", "Jacó");
+	tree.AddValue("Dã", "Jacó");
+	tree.AddValue("Naftali", "Jacó");
+	tree.AddValue("Gade", "Jacó");
+	tree.AddValue("Aser", "Jacó");
+	tree.AddValue("Issacar", "Jacó");
+	tree.AddValue("Zebulom", "Jacó");
+	tree.AddValue("José", "Jacó");
+	tree.AddValue("Benjamim", "Jacó");
+
+	assert(isaacNode->GetFirstChild()->GetData() == "Jacó");
+
+	assert(tree.PrintChildren(isaacNode->GetFirstChild()) == "Rúben Simeão Levi Judá Dã Naftali Gade Aser Issacar Zebulom José Benjamim");
+
+	assert(tree.GetTreeDepth() == 4);
+
+	//TODO: indexing and serching algorithms
+
+
+	return 1;
+}
+
+int TestHash() {
+
+	// Table that stores the champions of Football World Cups, and the year that they did it
+	HashTable::HashTable<std::string, std::string> tableWC("Uruguay", "1930");
+
+	tableWC.Insert("1934", "Italy");
+	tableWC.Insert("1938", "Italy");
+	tableWC.Insert("1958", "Brazil");
+	tableWC.Insert("1962", "Brazil");
+	tableWC.Insert("1966", "England");
+	tableWC.Insert("1970", "Brazil"); // THE DREAM TEAM BOY
+	tableWC.Insert("1974", "Germany");
+	tableWC.Insert("1978", "Argentina");
+	tableWC.Insert("1982", "Italy");
+	tableWC.Insert("1986", "Argentina");
+	tableWC.Insert("1990", "Germany");
+	tableWC.Insert("1994", "Brazil");
+	tableWC.Insert("1998", "France");
+	tableWC.Insert("2002", "Brazil");	
+	tableWC.Insert("2006", "Italy");
+	tableWC.Insert("2010", "Spain");
+	tableWC.Insert("2014", "Germany");
+	tableWC.Insert("2018", "France");
+	tableWC.Insert("2022", "Argentina"); // A sad moment in world's history
+
+	assert(tableWC.PrintKeys() == "1930 1934 1938 1950 1954 1958 1962 1966 \
+1970 1974 1978 1982 1986 1990 1994 1998 2002 2006 2010 2014 2018");
+
+
+
+	assert(tableWC["1934"] == "Italy");
+	assert(tableWC["2002"] == "Brazil");
+	assert(tableWC["2001"] == NULL);
+
 	return 1;
 }
 

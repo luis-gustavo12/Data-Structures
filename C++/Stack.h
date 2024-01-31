@@ -42,7 +42,18 @@ namespace Stack {
 			LinkedList::Node<T>* auxNode = new LinkedList::Node<T>(initialValue);
 			this->top = auxNode;
 			this->top->SetNext(nullptr);
-			
+
+		}
+
+		~Stack() {
+
+			while (this->top) {
+
+				LinkedList::Node<T>* auxNode = this->top;
+				this->top = this->top->GetNext();
+				delete auxNode;
+
+			}
 
 		}
 
@@ -102,11 +113,7 @@ namespace Stack {
 
 			return output;
 
-
-
 		}
-
-
 
 	};
 

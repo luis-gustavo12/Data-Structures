@@ -114,19 +114,18 @@ namespace LinkedList {
 
         }
 
-        // Same as ~LinkedList(). But for reasons I don't know, vsCommunity does not debug correctly when using Deconstructors
-        void DeleteItems() {
+        ~LinkedList() {
+
+            this->last = nullptr;
 
             while (this->head) {
 
-                Node<T>* deleleteNode = this->head;
-
+                Node<T>* auxNode = this->head;
                 this->head = this->head->GetNext();
-
-                delete deleleteNode;
-
+                delete auxNode;
 
             }
+
         }
 
         int GetSize() {
@@ -314,9 +313,11 @@ namespace LinkedList {
                 // When there's only the head node, we must also make last and head point it to null. This MUST BE tested, for not having memory issues
                 // By debugging when not making this procedure above, I could realise that this->kast (which wasn't being handled) was still pointing to another node
                 if (this->size == 1) { 
+                    Node<T>* auxNode = this->head;
                     this->head = nullptr;
                     this->last = nullptr;
                     this->size -= 1;
+                    delete auxNode;
                     return;
                 }
 
